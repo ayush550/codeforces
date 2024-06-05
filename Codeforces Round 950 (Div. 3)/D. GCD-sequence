@@ -1,0 +1,91 @@
+Problem link: https://codeforces.com/contest/1980/problem/D
+
+Intution / Approach:
+
+According to the question for the given array 'a' we have to check if the gcd(a[i], a[i+1]) <= gcd(a[i+1], a[i+2]) i.e. the obtained gcd sequence should be 
+strictly non-decreasing.
+
+Lets take an array for our example: 
+_ _ _ _ a[i] a[i+1] a[i+2] a[i+3] a[i+4] _ _ _ _
+
+when calculating the gcd of a[i], a[i+1], a[i+2]. We can find 
+gcd(a[i], a[i+1]) <= gcd(a[i+1], a[i+2]) ; In this case our array is fine and we don't need to remove any element
+gcd(a[i], a[i+1]) > gcd(a[i+1], a[i+2]) ; In this case we can remove either of a[i] a[i+1] a[i+2]. Because it might happen that 
+gcd(a[i], a[i+2]) || gcd(a[i], a[i+1]) || gcd(a[i+1], a[i+2]) makes the perfect sequence.
+
+So we will remove each of the index element one by one and check if after removing the element can we get the perfect non-decreasing sequence or not.
+
+Time Complexity: 
+__gcd(a,b) takes O(log n) time and running that N times
+T.C: O(N) * O(log n) = O(N.logn)
+
+Space Complexity:
+Taking N space for vector b and temp
+S.C: O(N)
+______________________________________________________________________________________________________________________________________________________
+Code:
+______________________________________________________________________________________________________________________________________________________
+#include<bits/stdc++.h>
+using namespace std;
+
+bool isRemoved(int index, vector<int> &a, vector<int> &b){
+    // removing the index element and checking if after removal we are getting non-decreasing sequence or not.
+    vector<int> temp;
+    for(int i = 0; i<a.size(); i++){
+        if(i == index) continue;
+        temp.push_back(a[i]);
+    }
+
+    int last = 1;
+
+    for(int i = 1; i<temp.size(); i++){
+        int current = __gcd(temp[i-1], temp[i]);
+        if(current < last)  return false;
+        last = current;
+    }
+
+    return true;
+}
+
+int main(){
+    int t;
+    cin>>t;
+
+    while(t--){
+        int n;
+        cin>>n;
+
+        vector<int> a;
+        for(int i = 0; i<n; i++){
+            int t;
+            cin>>t;
+            a.push_back(t);
+        }
+        vector<int> b;  // for storing gcd of two consecutive elements
+        for(int i = 1; i<n; i++){
+            b.push_back(__gcd(a[i-1], a[i]));
+        }
+
+        int index = -1;
+
+        // find out the first index from where our sequence starts to mismatch
+        for(int i = 0; i<n-2; i++){
+            if(b[i] > b[i+1]){
+                index = i;
+                break;
+            }
+        }
+
+      // index:     0 1  2 3  4  5 
+      // Elements: 20 6 12 3 48 36
+      // gcd / b :   2  6 3  3  12 
+      // first mismatch index is at 2. So our indexes in main array will be 2, 3, and 4
+
+        if(index == -1) cout<<"YES"<<endl;
+        else if(isRemoved(index, a, b) || isRemoved(index+1, a, b) || isRemoved(index+2, a, b)){
+            cout<<"YES"<<endl;
+        }
+        else    cout<<"NO"<<endl;
+
+    }
+}
