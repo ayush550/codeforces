@@ -1,0 +1,80 @@
+Problem Link: https://codeforces.com/contest/1980/problem/E
+
+Intuition / Approach:
+E.g:
+1 5 9      9 5 1
+6 4 2      2 4 6
+3 8 7      7 8 3
+The trick or basic thing to remember for this question is that No matter how many times you swaps the rows - elements which belong to one row will remain in 
+one row despite the number of row swaps or row index e.g: If 1 5 9 were in row_0 then {1, 5, 9} will remain together despite the row number i.e. the new row
+number can be 0, 1, 2 and the permutation can be any of {1, 5, 9}.
+Similarly the elements which belong together in column_j will remain in together despite the permutation and column number.
+
+Time Complexity:
+T.C: O(n.m) iterating over the matrix
+
+Space Complexity:
+S.C: O(n.m) for storing the elements in map along with their row, column index
+
+____________________________________________________________________________________________________________________________________________
+Code:
+____________________________________________________________________________________________________________________________________________
+#include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int t;
+    cin>>t;
+
+    while(t--){
+        int n, m;
+        cin>>n>>m;
+
+        unordered_map<int, pair<int, int>> mp;  // element, <row, column>
+
+        for(int i = 0; i<n; i++){
+            for(int j = 0; j<m; j++){
+                int a;
+                cin>>a;
+                mp[a] = make_pair(i, j);
+            }
+        }
+
+        map<pair<int, int>, int> row_swap, col_swap;  //<row, column>, count
+
+        for(int row = 0; row<n; row++){
+            for(int col = 0; col<m; col++){
+                int b;
+                cin>>b;
+                if(mp[b].first != row){
+                    row_swap[{mp[b].first, row}]++;
+                }
+                if(mp[b].second != col){
+                    col_swap[{mp[b].second, col}]++;
+                }
+            }
+        }
+
+
+        int ans = true;
+
+        for(auto &it: row_swap){
+            if(it.second != m){
+                ans = false;
+                break;
+            }
+        }
+
+        for(auto &it: col_swap){
+            if(it.second != n){
+                ans = false;
+                break;
+            }
+        }
+
+        if(ans) cout<<"YES"<<endl;
+        else cout<<"NO"<<endl;
+    }
+
+    return 0;
+}
