@@ -4,35 +4,35 @@ Intution:
 Let's consider the example
 n = 4
 original array = 3 1 7 8
-modified array = 2 2 7 10
+found array = 2 2 7 10
 m = 5
 d array   =      10 3 2 2 1
 according to the given question we are performing m operations on the original array to get modified array.
-Operation - original_array[ci] = d[i]
+Operation :- original_array[ci] = d[i]
 So basically we are replacing the values of original array with the d array value at a particular index.
 
-Now according to the above step the last value of array d must be present in the modified array. Why you ask? well since we are replacing the values of original 
+Now according to the above step the last value of array d must be present in the found array. Why you ask? well since we are replacing the values of original 
 array then the last replace operation will contain the last index value of d array. Isn't it?
 
 Now look at the last value of array d which is 1. 
-We have to ask is 1 present in the modified array? 
+We have to ask is 1 present in the found array? 
 If not simply return "NO". 
 
 Now for other values:
-if original_array[i] = 7 && modified_array = 7 both are same we need not to perform any modification operation for that index
-if original_array[i] = 3 && modified_array = 2 both are different, we need to check if modified value is present in the modified_array i.e. d_array.
+if original_array[i] = 7 && found_array = 7 both are same we need not to perform any modification operation for that index
+if original_array[i] = 3 && found_array = 2 both are different, we need to check if modified value is present in the found_array i.e. d_array.
 
-to handle the case of repetition we can just check if the count of '2' (value different in original & modified array) is equal or more in d_array i.e. we can 
+to handle the case of repetition we can just check if the count of '2' (value different in original & found array) is equal or more in d_array i.e. we can 
 safely perform that many replace operations.
 
 
 Time Complexity:
-O(n) - for iterating over the original and modified/found array, both are of length n
+O(n) - for iterating over the original and found array, both are of length n
 O(m) - iterating over d array (of length m) to store the count of values
 Overall - O(max(n, m))
 
 Space Complexity:
-O(m) - using unordered_map to store the count of d array i.e. modification (replacement in this case) operations values.
+O(m) - using unordered_map/map to store the count of d array i.e. modification (replacement in this case) operations values.
 
 _____________________________________________________________________________________________________________________________________________________
 Code:
@@ -40,41 +40,6 @@ ________________________________________________________________________________
 #include<bits/stdc++.h>
 using namespace std;
 
-string lostOperations(int n, vector<int> &original, vector<int> &found, int m, vector<int> &d){
-    unordered_map<int, int> mp;
-
-    for(int i = 0; i<m; i++){
-        mp[d[i]]++;
-    }
-
-    bool isPresent = false;
-    for(int i = 0; i<n; i++){
-        if(d[m-1] == found[i]){
-            isPresent = true;
-            break;
-        }
-    }
-
-    if(!isPresent){
-        return "NO";  // last index value is not present in the modified_array
-    }
-
-    for(int i = 0; i<n; i++){
-        if(original[i] == found[i]){
-            continue;
-        }else{
-            if(mp.find(found[i]) != mp.end()){
-                mp[found[i]]--;
-                if(mp[found[i]] == 0){
-                    mp.erase(found[i]);
-                }
-            }else{
-                return "NO";  // we are not able to perform replacement operation
-            }
-        }
-    }
-    return "YES";
-}
 
 int main(){
     int t;
@@ -83,30 +48,51 @@ int main(){
     while(t--){
         int n;
         cin>>n;
-
-        vector<int> original;
-        for(int i = 0; i<n; i++){
-            int t;
-            cin>>t;
-            original.push_back(t);
+        
+        vector<int> original(n);
+        for(auto &it: original){
+            cin>>it;
         }
-
-        vector<int> found;
-        for(int i = 0; i<n; i++){
-            int t;
-            cin>>t;
-            found.push_back(t);
+        
+        vector<int> found(n);
+        for(auto &it: found){
+            cin>>it;
         }
-
+        
         int m;
         cin>>m;
-        vector<int> d;
-        for(int i = 0; i<m; i++){
-            int t;
-            cin>>t;
-            d.push_back(t);
+        vector<int> d(m);
+        for(auto &it: d){
+            cin>>it;
+        }
+        
+        map<int, int> mismatch_elements, d_elements;
+        for(int i = 0; i<found.size(); i++){
+            if(original[i] != found[i]){
+                mismatch_elements[found[i]]++;    // counting how many mismatch elements of original array and found array are different in <key, count> pair
+            }
+        }
+        
+        
+        for(auto &it: d){
+            d_elements[it]++;    // elements in d array and their frequency
+        }
+        
+        
+        bool flag = true;
+      
+        for(auto &item: mismatch_elements){
+            if(item.second > d_elements[item.first]){
+                flag = false;    // weather we can safely perform replacement operation or not, if we come inside if that means we can't
+            }
         }
 
-        cout<<lostOperations(n, original, found, m, d)<<endl;
+        // last element of d array present inside found array
+        if(count(found.begin(), found.end(), d[m-1]) == 0)
+            flag = false;    
+        
+        if(flag)    cout<<"YES"<<endl;
+        else    cout<<"NO"<<endl;
+
     }
 }
