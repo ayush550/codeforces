@@ -1,3 +1,21 @@
+Problem link: https://codeforces.com/contest/1985/problem/C
+
+Intution / Approach:
+In an prefix the only candidate which could make that prefix good_prefix is maximum element as others are smaller than this and only maximum element could be
+the sum of remaining elements.
+So iterate over the array to calculate the maximum element and sum of the prefixes. If (sum - maxi == maxi) increase the count by 1.
+    
+Time Complexity:
+O(n) - Iterating over the array to calculate sum, maxi and count.
+
+Space Complexity:
+O(1) - Not using any data-structure to store data; sum, maxi, count are local variables.
+
+_____________________________________________________________________________________________________________________________________________________
+Code:
+_____________________________________________________________________________________________________________________________________________________
+
+
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -20,7 +38,7 @@ int main(){
         long long sum = 0, maxi = -1, count = 0;
 
         for(int i = 0; i<n; i++){
-            if(i == 0 && arr[i] == 0){
+            if(i == 0 && arr[i] == 0){    //If the first element is 0 then it should be included in good_prefix count
                 count++;
                 continue;
             }
