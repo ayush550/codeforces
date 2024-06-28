@@ -1,0 +1,84 @@
+Problem link: https://codeforces.com/contest/1986/problem/D
+
+Intution / Approach:
+There are n characters which means n-1 spaces where we can put n-2 symbol {'+', '*'}.
+
+If current character is 0 we can simply multiply all the characters with it to get minimum ans which will be zero.
+If current character is 1 we can multiply it with 'c' to get 'c'. Which is ignoring 1.
+For any other character place '+' to minimize the answer as '*' will only increase the ans.
+
+Edge Case: If the string is like 1111, 101 you can't ignore 1's as answer will be 1 only. 
+To tackle this we are storing dumming ans as -1 in case of 0, and 0 in case of 1.
+    
+Time Complexity:
+O(20 * 20) = O(1)
+maximum size of the string could be 20 characters
+
+Space Complexity:
+O(string size - 1) = O(20 - 1) = O(1)
+
+_____________________________________________________________________________________________________________________________________________________
+Code:
+_____________________________________________________________________________________________________________________________________________________
+
+
+#include <iostream>
+#include <math.h>
+#include <string>
+#include <climits>
+#include <vector>
+using namespace std;
+
+int main() {
+    int t;
+    cin >> t;
+
+    while (t--) {
+        int n;
+        cin >> n;
+
+        string s;
+        cin >> s;
+
+        if (n <= 2) {
+            cout << stoi(s) << endl;
+        } else {
+            int finalAns = INT_MAX;
+            for(int i = 0; i<n-1; i++){
+                vector<int> arr;
+                int j = 0;
+                while(j<n){
+                    int t;
+                    if(j==i){
+                        string temp = s.substr(j, 2);   // figuring out which two characters are going to be together in current iteration
+                        arr.push_back(stoi(temp));
+                        j += 2;
+                    }else{
+                        t = s[j] - '0';
+                        arr.push_back(t);
+                        j++;
+                    }
+                }
+                int ans = 0;
+                int arrLen = arr.size();
+                for(int i = 0; i<arrLen; i++){
+                    if(arr[i] == 0){
+                        ans = -1;
+                        break;
+                    }
+                    if(arr[i] == 1) continue;
+                    else{
+                        ans += arr[i];
+                    }
+                }
+                if(ans == 0)    ans = 1;    // dry run for 101 to get the clarity
+                if(ans == -1)   ans = 0;    // we have at least one 0 present in the array
+                finalAns = min(finalAns, ans);
+            }
+            
+            cout<<finalAns<<endl;
+        }
+    }
+
+    return 0;
+}
